@@ -1,0 +1,32 @@
+p {
+  color: rgb(185, 213, 216);
+  font-size: 16px;
+}
+body {
+    margin: 0;
+}
+#banner {
+    height: 100px;
+    background-color: rgb(111, 108, 241);
+}
+#middle {
+    display: flex;
+}
+#content {
+    flex: 1;
+    background-color: rgb(73, 146, 255);
+}
+#footer {
+    height: 100px;
+    background-color: skyblue;
+}
+#supporting {
+    width: 250px;
+    height: 100px;
+     background-color: rgb(166, 238, 249);
+}
+
+#nav {
+    width: 150px;
+    background-color: rgb(175, 234, 240);
+}
