@@ -8,12 +8,15 @@ body {
     font-family: Arial, sans-serif;
 }
 
+h1 {
+    margin: 0;
+}
+
 #banner {
     height: 100px;
+    line-height: 100px;
+    text-align: center;
     background-color: rgb(111, 108, 241);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     color: white;
     position: fixed;
     top: 0;
@@ -29,8 +32,7 @@ body {
 }
 
 #middle {
-    display: flex;
-    min-height: 500px;
+    overflow: hidden; /* Clear floats */
 }
 
 #nav {
@@ -43,7 +45,8 @@ body {
 
 #nav-placeholder {
     width: 150px;
-    flex-shrink: 0;
+    height: 1000px;
+    float: left;
     background-color: rgb(175, 234, 240);
 }
 
@@ -64,32 +67,35 @@ body {
 }
 
 #content {
-    flex: 1;
+    width: calc(100% - 150px - 250px);
+    height: 1000px;
+    float: left;
     background-color: rgb(73, 146, 255);
     padding: 20px;
 }
 
 #content section {
-    min-height: 120px;
+    height: 120px;
+    line-height: 120px;
+    text-align: center;
     background: rgba(255, 255, 255, 0.2);
     margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     color: white;
 }
 
 #supporting {
     width: 250px;
+    height: 1000px;
+    float: left;
     background-color: rgb(166, 238, 249);
     padding: 20px;
 }
 
 #footer {
     height: 100px;
+    line-height: 100px;
+    text-align: center;
     background-color: skyblue;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     color: white;
+    clear: both;
 }
