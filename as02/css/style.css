@@ -27,12 +27,12 @@ h1 {
     height: 100px;
 }
 
-#container {
+#wrapper {
     width: 800px;
     margin: 0 auto;
 }
 
-#middle {
+.container {
     overflow: hidden; /* Clear floats */
 }
 
