@@ -14,7 +14,7 @@ h1 {
 
 #banner {
     height: 100px;
-    line-height: 100px;
+    line-height: 80px; /* 100px - 外層 padding 5px×2 - .text-container padding 5px×2 */
     text-align: center;
     background-color: rgb(111, 108, 241);
     color: white;
@@ -39,7 +39,6 @@ h1 {
 #nav {
     width: 150px;
     background-color: rgb(175, 234, 240);
-    padding: 20px 10px;
     position: fixed;
     top: 100px;
 }
@@ -51,28 +50,11 @@ h1 {
     background-color: rgb(175, 234, 240);
 }
 
-#nav ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-#nav li {
-    margin: 20px 0;
-}
-
-#nav a {
-    text-decoration: none;
-    font-size: 24px;
-    color: #333;
-}
-
 #content {
     width: calc(100% - 150px - 250px);
     height: 1000px;
     float: left;
     background-color: rgb(73, 146, 255);
-    padding: 20px;
 }
 
 #content section {
@@ -89,7 +71,6 @@ h1 {
     height: 1000px;
     float: left;
     background-color: rgb(166, 238, 249);
-    padding: 20px;
 }
 
 #footer {
@@ -99,4 +80,40 @@ h1 {
     background-color: skyblue;
     color: white;
     clear: both;
+}
+
+/* 8. Box model: 修改<li>的margin與padding */
+ul {
+    padding-left: 0;
+}
+
+li {
+    display: block;
+    text-align: center;
+    margin-bottom: 5px;
+    background-color: lightgray;
+}
+
+li:hover {
+    background-color: pink;
+}
+
+ul a {
+    text-decoration: none;
+    font-size: 24px;
+    color: #333;
+}
+
+/* 8. Box model: Padding */
+#content, #nav, #supporting, #banner {
+    padding: 5px;
+}
+
+.text-container {
+    padding: 5px;
+}
+
+/* 8. Box model: 超鏈結捲動修正 */
+section {
+    scroll-margin-top: 100px;
 }
