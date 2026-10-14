@@ -6,65 +6,22 @@
   <title>午後</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@900&display=swap" rel="stylesheet">
   <style>
     :root {
       --paper: #f6f4ef;
       --ink: #2b2b2b;
-      --soft: #6f6c66;
       --line: #d9d5cc;
       --ice: #8fb8c9;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
     body {
       background: var(--paper);
       color: var(--ink);
       font-family: "Noto Serif TC", serif;
-      line-height: 2;
     }
 
-    /* ---------- 封面 ---------- */
-    .cover {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 24px;
-    }
-    .cover .eyebrow {
-      font-size: 0.85rem;
-      letter-spacing: 0.4em;
-      color: var(--soft);
-      margin-bottom: 1.5rem;
-    }
-    .cover h1 {
-      font-size: clamp(3rem, 10vw, 6rem);
-      font-weight: 900;
-      letter-spacing: 0.15em;
-      line-height: 1.3;
-    }
-    .cover h1 .drop { color: var(--ice); }
-    .cover .sub {
-      margin-top: 1.5rem;
-      color: var(--soft);
-      letter-spacing: 0.1em;
-    }
-    .cover .hint {
-      margin-top: 4rem;
-      font-size: 0.8rem;
-      color: var(--soft);
-      letter-spacing: 0.3em;
-      animation: float 2.4s ease-in-out infinite;
-    }
-    @keyframes float {
-      0%, 100% { transform: translateY(0); opacity: .5; }
-      50% { transform: translateY(8px); opacity: 1; }
-    }
-
-    /* ---------- 進度條（固定在上方） ---------- */
+    /* 上方閱讀進度條 */
     .progress {
       position: fixed;
       top: 0; left: 0;
@@ -74,114 +31,41 @@
       z-index: 10;
     }
 
-    /* ---------- 每一幕 ---------- */
-    .scene {
-      min-height: 160vh;
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 24px;
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 64px;
-      align-items: start;
-    }
-    .scene:nth-of-type(even) .frame { order: 2; }
-    .frame {
-      position: sticky;          /* 圖片捲動時固定住 */
-      top: 12vh;
-      height: 76vh;
+    /* 封面：只有標題 */
+    .cover {
+      height: 100vh;
       display: flex;
+      justify-content: center;
       align-items: center;
     }
-    .frame img {
-      width: 100%;
-      max-height: 76vh;
-      object-fit: contain;
+    .cover h1 {
+      font-size: clamp(4rem, 14vw, 8rem);
+      font-weight: 900;
+      letter-spacing: 0.2em;
+      padding-left: 0.2em;
+    }
+    .cover h1 span { color: var(--ice); }
+
+    /* 每一幕：一張圖，置中 */
+    .scene {
+      height: 160vh;
+      padding: 0 16px;
+    }
+    .scene img {
+      position: sticky;          /* 捲動時圖片固定在畫面中間 */
+      top: calc((100vh - min(80vh, 100vw - 32px)) / 2);
+      display: block;
+      width: min(80vh, 100%);
+      margin: 0 auto;
       border: 1px solid var(--line);
       box-shadow: 0 18px 40px rgba(0,0,0,.08);
       background: #fff;
-    }
-    .text {
-      padding-top: 70vh;
-      padding-bottom: 30vh;
-    }
-    .text .num {
-      font-size: 0.8rem;
-      letter-spacing: 0.4em;
-      color: var(--ice);
-      font-weight: 600;
-    }
-    .text h2 {
-      font-size: 1.6rem;
-      font-weight: 600;
-      margin: 0.4rem 0 1rem;
-      letter-spacing: 0.1em;
-    }
-    .text p {
-      font-size: 1.05rem;
-      color: #444;
-    }
-
-    /* 淡入效果 */
-    .reveal {
       opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 1s ease, transform 1s ease;
+      transition: opacity 1.2s ease;
     }
-    .reveal.show { opacity: 1; transform: none; }
+    .scene img.show { opacity: 1; }
 
-    /* ---------- 結尾 ---------- */
-    .ending {
-      min-height: 80vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 24px;
-    }
-    .ending .end {
-      font-size: 2rem;
-      font-weight: 900;
-      letter-spacing: 0.5em;
-      margin-bottom: 2rem;
-    }
-    .ending .back {
-      color: var(--soft);
-      text-decoration: none;
-      border-bottom: 1px solid var(--line);
-      font-size: 0.9rem;
-    }
-    footer {
-      text-align: center;
-      font-size: 0.8rem;
-      color: var(--soft);
-      padding: 32px 24px 48px;
-      border-top: 1px solid var(--line);
-    }
-
-    /* ---------- 手機版 ---------- */
-    @media (max-width: 760px) {
-      .scene {
-        display: block;
-        min-height: auto;
-        padding: 0 16px;
-      }
-      .frame {
-        position: sticky;
-        top: 8vh;
-        height: auto;
-      }
-      .frame img { max-height: 60vh; }
-      .text {
-        position: relative;
-        padding: 0;
-        margin: 40vh 0 50vh;
-        background: rgba(246,244,239,.94);
-        border: 1px solid var(--line);
-        padding: 20px;
-      }
-    }
+    .ending { height: 40vh; }
   </style>
 </head>
 <body>
@@ -189,83 +73,26 @@
   <div class="progress" id="progress"></div>
 
   <header class="cover">
-    <p class="eyebrow">一個夏日午後的六個片刻</p>
-    <h1>午<span class="drop">後</span></h1>
-    <p class="sub">文／林天怡</p>
-    <p class="hint">往下捲動 ↓</p>
+    <h1>午<span>後</span></h1>
   </header>
 
   <main>
-    <section class="scene">
-      <div class="frame"><img src="images/01.jpg" alt="電風扇吹著，長髮女生站在窗邊撥開頭髮"></div>
-      <div class="text reveal">
-        <p class="num">01</p>
-        <h2>悶熱</h2>
-        <p>午後三點，電風扇轉了又轉，屋裡的熱氣還是散不去。她撥開黏在脖子上的頭髮，望向窗外刺眼的光。</p>
-      </div>
-    </section>
-
-    <section class="scene">
-      <div class="frame"><img src="images/02.jpg" alt="女生低著頭講電話"></div>
-      <div class="text reveal">
-        <p class="num">02</p>
-        <h2>電話</h2>
-        <p>電話響了。另一頭的聲音說了很久，她只是低著頭聽，一句話也沒有說。</p>
-      </div>
-    </section>
-
-    <section class="scene">
-      <div class="frame"><img src="images/03.jpg" alt="被風輕輕吹動的窗簾"></div>
-      <div class="text reveal">
-        <p class="num">03</p>
-        <h2>窗簾</h2>
-        <p>掛上電話之後，房間安靜下來，只剩窗簾被風一下一下推動，像在替她呼吸。</p>
-      </div>
-    </section>
-
-    <section class="scene">
-      <div class="frame"><img src="images/04.jpg" alt="女生把一顆冰塊舉到光下看"></div>
-      <div class="text reveal">
-        <p class="num">04</p>
-        <h2>冰塊</h2>
-        <p>她拿起一顆冰塊，舉到光下。透明、有稜有角，像一句還來不及說出口的話。</p>
-      </div>
-    </section>
-
-    <section class="scene">
-      <div class="frame"><img src="images/05.jpg" alt="手掌心捧著幾顆冰塊"></div>
-      <div class="text reveal">
-        <p class="num">05</p>
-        <h2>掌心</h2>
-        <p>冰塊在掌心慢慢融化。涼意一點一點滲進皮膚，也一點一點從指縫間流走。</p>
-      </div>
-    </section>
-
-    <section class="scene">
-      <div class="frame"><img src="images/06.jpg" alt="女生打開冰箱往裡面找東西"></div>
-      <div class="text reveal">
-        <p class="num">06</p>
-        <h2>冰箱</h2>
-        <p>她打開冰箱，伸手往最深處找。也許還剩下一些什麼，足夠撐過這個夏天。</p>
-      </div>
-    </section>
+    <section class="scene"><img src="images/01.jpg" alt="電風扇吹著，長髮女生站在窗邊撥開頭髮"></section>
+    <section class="scene"><img src="images/02.jpg" alt="女生打開冰箱往裡面找東西"></section>
+    <section class="scene"><img src="images/03.jpg" alt="手掌心捧著幾顆冰塊"></section>
+    <section class="scene"><img src="images/04.jpg" alt="女生把一顆冰塊舉到光下看"></section>
+    <section class="scene"><img src="images/05.jpg" alt="被風輕輕吹動的窗簾"></section>
+    <section class="scene"><img src="images/06.jpg" alt="女生低著頭講電話"></section>
   </main>
 
-  <section class="ending">
-    <p class="end reveal">完</p>
-    <a class="back" href="#">回到開頭 ↑</a>
-  </section>
-
-  <footer>
-    AS04 Image Generation｜圖片以 AI 圖像生成工具製作｜林天怡
-  </footer>
+  <div class="ending"></div>
 
   <script>
-    // 文字捲動到畫面中時淡入
+    // 圖片捲動到畫面中時淡入
     const io = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
-    }, { threshold: 0.3 });
-    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    }, { threshold: 0.2 });
+    document.querySelectorAll('.scene img').forEach(el => io.observe(el));
 
     // 上方閱讀進度條
     const bar = document.getElementById('progress');
