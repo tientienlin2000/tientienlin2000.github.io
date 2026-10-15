@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scene Layout</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 78px;
+    }
+
+    body {
+      margin: 0;
+      color: #111;
+      font-family: Arial, "Noto Sans TC", sans-serif;
+      background: #fff;
+    }
+
+    /* 主要內容：置中，寬度約為螢幕的六成 */
+    .page {
+      width: 60%;
+      margin: 0 auto;
+    }
+
+    /* 固定於視窗上方；半透明效果讓捲動內容透出 */
+    .banner {
+      position: fixed;
+      top: 0;
+      left: 20%;
+      width: 60%;
+      height: 44px;
+      padding: 4px 10px;
+      display: flex;
+      align-items: center;
+      background: rgba(255, 241, 168, 0.78);
+      color: #444;
+      font-size: 30px;
+      line-height: 1.1;
+      z-index: 100;
+      backdrop-filter: blur(1px);
+    }
+
+    /* Banner 固定後，預留空間避免內容一開始被遮住 */
+    .banner-spacer {
+      height: 44px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 10% minmax(0, 1fr) 10%;
+      column-gap: 12px;
+      align-items: start;
+    }
+
+    /* 固定在視窗上方的左側導覽 */
+    .sidebar {
+      position: fixed;
+      top: 54px;
+      left: calc(20% - 2px);
+      width: max-content;
+      max-width: 10%;
+      z-index: 90;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .nav-list a {
+      display: block;
+      padding: 5px 7px;
+      background: #dedede;
+      color: #173d68;
+      font-size: 16px;
+      line-height: 1.25;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background-color 0.15s ease;
+    }
+
+    .nav-list a:hover,
+    .nav-list a:focus-visible {
+      background: #f3a6c5;
+      outline: none;
+    }
+
+    .scenes {
+      grid-column: 2;
+      min-width: 0;
+    }
+
+    .scene {
+      min-height: 100vh;
+      padding: 22px 8px;
+      scroll-margin-top: 52px;
+    }
+
+    .scene h2 {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .scene p {
+      margin-top: 18px;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    /* Information 會正常隨頁面捲動，不使用 fixed 或 sticky */
+    .information {
+      grid-column: 3;
+      margin-top: 0;
+      padding: 7px 8px;
+      background: #f5b4cc;
+      color: #111;
+      font-size: 16px;
+      line-height: 1.3;
+      min-height: 80px;
+    }
+
+    .information-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 400;
+    }
+
+    .footer {
+      margin-top: 0;
+      padding: 12px 10px;
+      min-height: 44px;
+      background: #555;
+      color: #111;
+      font-size: 16px;
+    }
+
+    @media (max-width: 700px) {
+      .page {
+        width: 92%;
+      }
+
+      .banner {
+        left: 4%;
+        width: 92%;
+      }
+
+      .sidebar {
+        left: 4%;
+        max-width: 25%;
+      }
+
+      .layout {
+        grid-template-columns: minmax(82px, 24%) minmax(0, 1fr);
+        column-gap: 10px;
+      }
+
+      .scenes {
+        grid-column: 2;
+      }
+
+      .information {
+        grid-column: 2;
+        grid-row: 1;
+        margin-bottom: 16px;
+      }
+
+      .scene {
+        min-height: 100vh;
+      }
+
+      .scene h2 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="banner">Here is Banner</header>
+
+  <div class="page">
+    <div class="banner-spacer" aria-hidden="true"></div>
+
+    <div class="layout">
+      <nav class="sidebar" aria-label="Scene 導覽">
+        <ul class="nav-list">
+          <li><a href="#scene01">Scene01</a></li>
+          <li><a href="#scene02">Scene02</a></li>
+          <li><a href="#scene03">Scene03</a></li>
+          <li><a href="#scene04">Scene04</a></li>
+        </ul>
+      </nav>
+
+      <main class="scenes">
+        <section class="scene" id="scene01">
+          <h2>Scene01</h2>
+          <p>這裡是 Scene01 的文字內容。</p>
+        </section>
+
+        <section class="scene" id="scene02">
+          <h2>Scene02</h2>
+          <p>這裡是 Scene02 的文字內容。</p>
+        </section>
+
+        <section class="scene" id="scene03">
+          <h2>Scene03</h2>
+          <p>這裡是 Scene03 的文字內容。</p>
+        </section>
+
+        <section class="scene" id="scene04">
+          <h2>Scene04</h2>
+          <p>這裡是 Scene04 的文字內容。</p>
+        </section>
+      </main>
+
+      <aside class="information">
+        <h2 class="information-title">Information</h2>
+      </aside>
+    </div>
+
+    <footer class="footer">Here is footer</footer>
+  </div>
+</body>
+</html>
