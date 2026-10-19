@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>AS04 Bootstrap and AI</title>
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<style>
+		/* ===== 主題色：淺綠 + 淺紫 ===== */
+		:root {
+			--green-light: #e3f5e9;
+			--green: #b8e6c8;
+			--green-deep: #4f9a6b;
+			--purple-light: #efe8fa;
+			--purple: #d4c3f0;
+			--purple-deep: #7a5ab8;
+			--text-dark: #3d3550;
+		}
+
+		body {
+			color: var(--text-dark);
+			background-color: #fff;
+		}
+
+		/* ===== 頁面最上方 Banner ===== */
+		.top-banner {
+			background: linear-gradient(120deg, var(--green) 0%, var(--purple) 100%);
+			color: var(--text-dark);
+			text-align: center;
+			padding: 4rem 1rem;
+		}
+
+		.top-banner h1 {
+			font-weight: 700;
+			letter-spacing: 0.1em;
+		}
+
+		/* ===== 導覽列：置頂 + hover 效果 ===== */
+		.navbar-custom {
+			background-color: rgba(255, 255, 255, 0.95);
+			box-shadow: 0 2px 8px rgba(122, 90, 184, 0.15);
+		}
+
+		.navbar-custom .navbar-brand {
+			color: var(--purple-deep);
+			font-weight: 700;
+		}
+
+		.navbar-custom .nav-link {
+			color: var(--text-dark);
+			margin: 0 0.25rem;
+			padding: 0.5rem 1rem !important;
+			border-radius: 20px;
+			transition: background-color 0.3s, color 0.3s;
+		}
+
+		/* 滑鼠移過去時變色 */
+		.navbar-custom .nav-link:hover {
+			background-color: var(--purple);
+			color: #fff;
+		}
+
+		.navbar-custom .navbar-brand:hover {
+			color: var(--green-deep);
+		}
+
+		/* ===== 每個 Section 的 Banner：滿版、一個螢幕高 ===== */
+		.banner-div {
+			height: 100vh;
+			color: var(--text-dark);
+			text-align: center;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
+
+		.banner-div h2 {
+			font-size: 3rem;
+			font-weight: 700;
+		}
+
+		/* 綠、紫交錯 */
+		.theme-green .banner-div {
+			background-color: var(--green);
+		}
+
+		.theme-purple .banner-div {
+			background-color: var(--purple);
+		}
+
+		/* ===== 內容區：兩個螢幕高 ===== */
+		.content-div {
+			padding: 2rem;
+			min-height: calc(200vh - 8rem);
+		}
+
+		.theme-green .content-div {
+			background-color: var(--green-light);
+		}
+
+		.theme-purple .content-div {
+			background-color: var(--purple-light);
+		}
+
+		.content-padding {
+			padding: 0 2rem;
+		}
+
+		/* 內容方塊：白底、圓角 */
+		.content-bg {
+			background-color: #fff;
+			padding: 1.5rem;
+			border-radius: 10px;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+			margin-bottom: 1.5rem;
+		}
+
+		.theme-green .content-bg h3 {
+			color: var(--green-deep);
+		}
+
+		.theme-purple .content-bg h3 {
+			color: var(--purple-deep);
+		}
+
+		footer {
+			background: linear-gradient(120deg, var(--purple) 0%, var(--green) 100%);
+			text-align: center;
+			padding: 1.5rem;
+		}
+	</style>
+</head>
+
+<body>
+	<!-- 頁面最上方 Banner -->
+	<div class="top-banner" id="top">
+		<h1>這裡是Banner</h1>
+		<p class="mb-0">AS#4 Bootstrap and AI</p>
+	</div>
+
+	<!-- 導覽列（置頂） -->
+	<nav class="navbar navbar-expand-lg navbar-light navbar-custom sticky-top" id="mainNav">
+		<a class="navbar-brand" href="#top">首頁</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+			aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNav">
+			<ul class="navbar-nav">
+				<li class="nav-item"><a class="nav-link" href="#section1">區段1</a></li>
+				<li class="nav-item"><a class="nav-link" href="#section2">區段2</a></li>
+				<li class="nav-item"><a class="nav-link" href="#section3">區段3</a></li>
+			</ul>
+		</div>
+	</nav>
+
+	<!-- 區段1 -->
+	<section id="section1" class="theme-green">
+		<div class="banner-div">
+			<h2>區段1 Banner</h2>
+		</div>
+		<div class="content-div">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-2"></div>
+					<div class="col-md-8 content-padding">
+						<div class="content-bg">
+							<h3>區段1 內容</h3>
+							<p>這是區段1的內容。Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in libero nec dolor luctus bibendum.</p>
+							<p>Quisque vel quam nec massa dictum varius ac eu urna. Suspendisse ut tristique ex.</p>
+						</div>
+						<div class="content-bg">
+							<h3>關於這個網頁</h3>
+							<p>這個網頁使用 Bootstrap 4 製作，包含置頂導覽列、滿版 Banner，以及點選連結後平滑捲動的效果。</p>
+						</div>
+					</div>
+					<div class="col-md-2"></div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- 區段2 -->
+	<section id="section2" class="theme-purple">
+		<div class="banner-div">
+			<h2>區段2 Banner</h2>
+		</div>
+		<div class="content-div">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-2"></div>
+					<div class="col-md-8 content-padding">
+						<div class="content-bg">
+							<h3>區段2 內容</h3>
+							<p>這是區段2的內容。Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in libero nec dolor luctus bibendum.</p>
+							<p>Quisque vel quam nec massa dictum varius ac eu urna. Suspendisse ut tristique ex.</p>
+						</div>
+						<div class="content-bg">
+							<h3>配色說明</h3>
+							<p>整體以淺綠與淺紫交錯搭配：Banner 用較飽和的色調，內容區使用更淡的同色系，內容方塊則維持白底方便閱讀。</p>
+						</div>
+					</div>
+					<div class="col-md-2"></div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- 區段3 -->
+	<section id="section3" class="theme-green">
+		<div class="banner-div">
+			<h2>區段3 Banner</h2>
+		</div>
+		<div class="content-div">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-2"></div>
+					<div class="col-md-8 content-padding">
+						<div class="content-bg">
+							<h3>區段3 內容</h3>
+							<p>這是區段3的內容。Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in libero nec dolor luctus bibendum.</p>
+							<p>Quisque vel quam nec massa dictum varius ac eu urna. Suspendisse ut tristique ex.</p>
+						</div>
+						<div class="content-bg">
+							<h3>平滑捲動</h3>
+							<p>點選上方導覽列的連結時，畫面會慢慢捲到對應區段，而且會扣掉導覽列的高度，標題不會被導覽列擋住。</p>
+						</div>
+					</div>
+					<div class="col-md-2"></div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<footer>
+		<small>AS04 · Bootstrap and AI</small>
+	</footer>
+
+	<!-- Bootstrap 相依套件（jQuery 要在 Bootstrap 之前載入） -->
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+	<!-- 平滑捲動 + 修正捲動位置 -->
+	<script>
+		(function () {
+			var nav = document.getElementById('mainNav');
+			var duration = 800; // 捲動時間（毫秒）
+
+			// 緩入緩出，讓捲動起步和停下都比較柔和
+			function easeInOutQuad(t) {
+				return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+			}
+
+			function smoothScrollTo(targetY) {
+				var startY = window.pageYOffset;
+				var distance = targetY - startY;
+				var startTime = null;
+
+				function step(timestamp) {
+					if (!startTime) startTime = timestamp;
+					var progress = Math.min((timestamp - startTime) / duration, 1);
+					window.scrollTo(0, startY + distance * easeInOutQuad(progress));
+					if (progress < 1) requestAnimationFrame(step);
+				}
+				requestAnimationFrame(step);
+			}
+
+			document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+				link.addEventListener('click', function (event) {
+					var hash = this.getAttribute('href');
+					var target = document.querySelector(hash);
+					if (!target) return;
+
+					event.preventDefault(); // 不要直接跳過去
+
+					var navHeight = nav.offsetHeight;
+					// 「首頁」捲回最上面；其他區段扣掉導覽列高度，避免被擋住
+					var targetY = (hash === '#top')
+						? 0
+						: target.getBoundingClientRect().top + window.pageYOffset - navHeight;
+
+					smoothScrollTo(targetY);
+
+					// 更新網址列，但不觸發跳轉
+					history.pushState(null, '', hash);
+
+					// 手機版點完選單後自動收起
+					var collapse = document.getElementById('navbarNav');
+					if (collapse.classList.contains('show')) {
+						$(collapse).collapse('hide');
+					}
+				});
+			});
+		})();
+	</script>
+</body>
+
+</html>
