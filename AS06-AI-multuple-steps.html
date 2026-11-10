@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>上下滑動換頁</title>
+
+  <style>
+    /* 清除瀏覽器預設的邊距 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* 讓 html 和 body 剛好等於一個畫面高度，並隱藏捲軸 */
+    html, body {
+      height: 100%;
+      overflow: hidden;            /* 不顯示捲軸，也不讓瀏覽器自己捲動 */
+      touch-action: none;          /* 手機上關掉瀏覽器原生的滑動，全部交給我們的程式處理 */
+      overscroll-behavior: none;   /* 避免手機下拉重新整理、橡皮筋回彈 */
+    }
+
+    /* 包住所有頁面的容器：靠它整體上下移動來切換頁面 */
+    #wrapper {
+      position: relative;          /* 讓裡面每頁的 offsetTop 以容器為基準來計算 */
+      will-change: transform;      /* 提示瀏覽器這個元素會移動，動畫更順 */
+    }
+
+    /* 一般頁面：高度一個畫面，貼滿整個畫面 */
+    .page {
+      height: 100vh;               /* 舊瀏覽器用 vh */
+      height: 100dvh;              /* 新瀏覽器用 dvh，手機網址列伸縮時高度也會正確 */
+      width: 100%;
+      display: flex;               /* 用 flex 讓文字置中 */
+      justify-content: center;     /* 水平置中 */
+      align-items: center;         /* 垂直置中 */
+      color: #fff;                 /* 白色字 */
+      font-size: 10vw;             /* 大字，會隨畫面寬度縮放 */
+      font-weight: bold;
+      letter-spacing: 0.1em;
+    }
+
+    /* 第三頁：高度是兩個畫面，裡面再分上下兩塊 */
+    .page3 {
+      height: 200vh;
+      height: 200dvh;
+      display: block;              /* 不用 flex 置中，改成上下兩塊依序排列 */
+    }
+
+    /* 第三頁的上半部和下半部，各一個畫面高 */
+    .half {
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;      /* 主標題和副標題上下排 */
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* 「上半部」「下半部」的小字標示 */
+    .half small {
+      font-size: 4vw;
+      font-weight: normal;
+      margin-top: 0.5em;
+      opacity: 0.9;
+    }
+
+    /* 各頁底色 */
+    .page1        { background-color: #b5533c; } /* 磚紅 */
+    .page2        { background-color: #5f7480; } /* 藍灰 */
+    .half-top     { background-color: #6a9a4a; } /* 第三頁上半部：草綠 */
+    .half-bottom  { background-color: #7f9183; } /* 第三頁下半部：灰綠 */
+    .page4        { background-color: #6b4c8a; } /* 紫 */
+    .page5        { background-color: #1f5f5f; } /* 深青 */
+  </style>
+</head>
+<body>
+
+  <!-- 外層容器：所有頁面由上到下排列，整個容器上下移動來換頁 -->
+  <div id="wrapper">
+    <div class="page page1">第一頁</div>
+    <div class="page page2">第二頁</div>
+
+    <!-- 第三頁：200vh，分成上半部和下半部 -->
+    <div class="page page3">
+      <div class="half half-top">第三頁<small>上半部</small></div>
+      <div class="half half-bottom">第三頁<small>下半部</small></div>
+    </div>
+
+    <div class="page page4">第四頁</div>
+    <div class="page page5">第五頁</div>
+  </div>
+
+  <!-- 從 CDN 載入 jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+  <script>
+    $(function () {
+
+      var $wrapper   = $('#wrapper');   // 會移動的容器
+      var $pages     = $('.page');      // 所有頁面
+      var totalPages = $pages.length;   // 總頁數（5）
+      var FREE       = 2;               // 可以自由捲動的頁面：第三頁（從 0 開始算，所以是 2）
+
+      var current  = 0;      // 目前在第幾頁（從 0 開始算）
+      var inner    = 0;      // 在第三頁裡已經往下捲了多少像素（0 = 頂端）
+      var isMoving = false;  // 是否正在整頁切換中（切換時不接受新的捲動）
+      var lastWheel = 0;     // 上一次收到滾輪事件的時間
+      var needNewGesture = false; // 換頁後，要等「新的一次捲動」才繼續反應（避免慣性一路滑過去）
+      var topCount = 0;      // 在第三頁頂端「往上捲」了幾下（捲到第二下才跳回第二頁）
+
+      var PAGE_SPEED = 'transform 0.7s ease-in-out'; // 整頁切換的動畫：0.7 秒
+
+      /* ---------- 小工具 ---------- */
+
+      // 目前畫面高度
+      function viewH() {
+        return window.innerHeight;
+      }
+
+      // 第三頁最多能往下捲多少（第三頁高度 − 一個畫面高度）
+      function maxInner() {
+        return $pages[FREE].offsetHeight - viewH();
+      }
+
+      // 把數字限制在 min ~ max 之間
+      function clamp(n, min, max) {
+        return Math.max(min, Math.min(max, n));
+      }
+
+      // 依照目前的頁碼和第三頁的捲動量，把容器移到正確位置
+      // transition 參數決定這次移動要用什麼動畫（'none' 代表立刻跟上，不要動畫）
+      function render(transition) {
+        var y = $pages[current].offsetTop;   // 目前這頁在容器中的位置
+        if (current === FREE) y += inner;    // 在第三頁時，再加上頁內捲動的量
+        $wrapper.css({
+          transition: transition,
+          transform: 'translate3d(0,' + (-y) + 'px,0)'
+        });
+      }
+
+      // 整頁切換到指定的頁面
+      function goTo(index) {
+        if (index < 0 || index > totalPages - 1) return; // 第一頁往上、最後一頁往下：不動作
+
+        // 進入第三頁時：從上面來就停在頂端，從下面（第四頁）回來就停在底部
+        if (index === FREE) {
+          inner = (index > current) ? 0 : maxInner();
+          // 剛從第二頁進來（停在頂端）時，算作已經捲過一下，
+          // 這樣想立刻回第二頁，往上捲一下就好；
+          // 其他情況（從第四頁回來）從 0 開始算
+          topCount = (index > current) ? 1 : 0;
+        }
+
+        isMoving = true;   // 上鎖：動畫進行中
+        current = index;
+        render(PAGE_SPEED);
+
+        // 0.7 秒動畫結束後解鎖，並要求下一次必須是新的捲動動作
+        setTimeout(function () {
+          isMoving = false;
+          needNewGesture = true;
+        }, 700);
+      }
+
+      /* ---------- 滑鼠滾輪／觸控板 ---------- */
+
+      $(window).on('wheel', function (e) {
+        var ev    = e.originalEvent;
+        var delta = ev.deltaY;                 // 正數 = 往下捲，負數 = 往上捲
+        if (ev.deltaMode === 1) delta *= 40;   // Firefox 有時以「行」為單位，換算成像素
+
+        var now = Date.now();
+        var newGesture = (now - lastWheel) > 150; // 和上一個事件隔超過 150 毫秒，就算是新的一次捲動
+        lastWheel = now;
+
+        if (isMoving) return;            // 整頁動畫中，不理會
+        if (Math.abs(delta) < 1) return; // 幾乎沒動，不理會
+
+        // 剛換完頁：觸控板的慣性還在送事件，要等使用者重新捲一次才反應
+        if (needNewGesture) {
+          if (!newGesture) return;
+          needNewGesture = false;
+        }
+
+        // ===== 在第三頁：一般的平滑捲動 =====
+        if (current === FREE) {
+          var max = maxInner();
+
+          // 已經在最底部又往下捲：是新的一次捲動才滑到第四頁
+          // （同一次捲動剛好捲到底時會先停住，不會直接衝進第四頁）
+          if (delta > 0 && inner >= max - 1) {
+            if (newGesture) goTo(FREE + 1);
+            return;
+          }
+
+          // 已經在最頂端又往上捲：每一次新的捲動記一下，捲到「第二下」才滑回第二頁
+          if (delta < 0 && inner <= 1) {
+            if (newGesture) {
+              topCount++;
+              if (topCount >= 2) goTo(FREE - 1);
+            }
+            return;
+          }
+
+          // 其他情況：捲多少就移動多少，可以停在任何位置
+          inner = clamp(inner + delta, 0, max);
+          if (inner > 1) topCount = 0;        // 離開頂端了，頂端的計數歸零
+          render('transform 0.15s ease-out'); // 很短的過渡，讓滑鼠滾輪一格一格捲時也順一點
+          return;
+        }
+
+        // ===== 其他頁：一次滑一整頁 =====
+        if (!newGesture) return;  // 同一次捲動只換一頁
+        if (delta > 0) goTo(current + 1);
+        else           goTo(current - 1);
+      });
+
+      /* ---------- 手機觸控 ---------- */
+
+      var touch = null; // 記錄這次手指滑動的資訊
+
+      $(window).on('touchstart', function (e) {
+        if (isMoving) { touch = null; return; } // 整頁動畫中，不接受新的滑動
+        var y = e.originalEvent.touches[0].clientY;
+        touch = {
+          startY: y,               // 手指一開始的位置
+          lastY: y,                // 手指最後的位置
+          lastT: Date.now(),       // 最後一次移動的時間
+          speed: 0,                // 手指移動速度（像素／毫秒），用來做放開後的慣性
+          startInner: inner        // 手指按下時，第三頁捲到哪裡
+        };
+      });
+
+      $(window).on('touchmove', function (e) {
+        if (!touch) return;
+        var y   = e.originalEvent.touches[0].clientY;
+        var now = Date.now();
+
+        // 計算手指速度（往上滑為正數，代表畫面往下捲）
+        var dt = now - touch.lastT;
+        if (dt > 0) touch.speed = (touch.lastY - y) / dt;
+        touch.lastY = y;
+        touch.lastT = now;
+
+        // 在第三頁：畫面直接跟著手指移動
+        if (current === FREE) {
+          inner = clamp(touch.startInner + (touch.startY - y), 0, maxInner());
+          if (inner > 1) topCount = 0;   // 離開頂端了，頂端的計數歸零
+          render('none');
+        }
+      });
+
+      $(window).on('touchend touchcancel', function () {
+        if (!touch) return;
+        var dy  = touch.startY - touch.lastY;  // 手指總共滑了多少（往上滑為正）
+        var max = maxInner();
+        var t   = touch;
+        touch = null;
+
+        // ===== 在第三頁 =====
+        if (current === FREE) {
+          // 手指按下時已經在底部，又往上滑超過 50px：滑到第四頁
+          if (t.startInner >= max - 1 && dy > 50) { goTo(FREE + 1); return; }
+          // 手指按下時已經在頂端，又往下滑超過 50px：記一下，滑到「第二下」才回第二頁
+          if (t.startInner <= 1 && dy < -50) {
+            topCount++;
+            if (topCount >= 2) goTo(FREE - 1);
+            return;
+          }
+
+          // 其他情況：放開手指後依速度再多滑一小段（慣性），停在任何位置
+          if (Date.now() - t.lastT < 100) {   // 放開前還在移動才有慣性
+            inner = clamp(inner + t.speed * 250, 0, max);
+            if (inner > 1) topCount = 0;   // 離開頂端了，頂端的計數歸零
+            render('transform 0.5s ease-out');
+          }
+          return;
+        }
+
+        // ===== 其他頁：滑動超過 50px 才換頁 =====
+        if (dy > 50)       goTo(current + 1);
+        else if (dy < -50) goTo(current - 1);
+      });
+
+      /* ---------- 視窗大小改變 ---------- */
+
+      // 畫面高度改變（轉向、手機網址列伸縮）時，重新對齊位置
+      $(window).on('resize', function () {
+        inner = clamp(inner, 0, maxInner());
+        render('none');
+      });
+
+      // 一開始停在第一頁
+      render('none');
+    });
+  </script>
+
+</body>
+</html>

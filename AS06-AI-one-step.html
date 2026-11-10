@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>五頁捲動網頁</title>
+<style>
+  /* 基本重設 */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* 隱藏捲軸：不讓瀏覽器自己捲動，全部交給 JavaScript 控制 */
+  html, body {
+    overflow: hidden;
+    height: 100%;
+    scrollbar-width: none;          /* Firefox */
+    -ms-overflow-style: none;       /* 舊版 Edge */
+    touch-action: none;             /* 手機上停用瀏覽器預設的滑動捲動 */
+  }
+  html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; } /* Chrome、Safari */
+
+  /* 包住所有頁面的容器：用改變 top 的方式「捲動」 */
+  #wrap { position: absolute; top: 0; left: 0; width: 100%; }
+
+  /* 每一頁的共同樣式：高度 100vh，白色大字置中 */
+  .page, .half {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 64px;
+    font-weight: bold;
+    font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  }
+  .half small { font-size: 32px; margin-top: 12px; }
+
+  /* 第三頁高 200vh，由上下兩個半部組成 */
+  #page3 { height: 200vh; display: block; }
+
+  /* 各頁底色 */
+  #page1 { background: #b5482f; } /* 磚紅 */
+  #page2 { background: #6b7f8e; } /* 藍灰 */
+  #page3 .top    { background: #7cae4a; } /* 草綠 */
+  #page3 .bottom { background: #7f9a84; } /* 灰綠 */
+  #page4 { background: #7a4a9e; } /* 紫 */
+  #page5 { background: #1f5f63; } /* 深青 */
+</style>
+</head>
+<body>
+<div id="wrap">
+
+  <section class="page" id="page1">第一頁</section>
+  <section class="page" id="page2">第二頁</section>
+  <section id="page3">
+    <div class="half top">第三頁<small>上半部</small></div>
+    <div class="half bottom">第三頁<small>下半部</small></div>
+  </section>
+  <section class="page" id="page4">第四頁</section>
+  <section class="page" id="page5">第五頁</section>
+</div>
+
+<!-- 從 CDN 載入 jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+$(function () {
+  // ===== 狀態變數 =====
+  var pages = ['#page1', '#page2', '#page3', '#page4', '#page5'];
+  var current = 0;          // 目前所在頁的索引（0 = 第一頁）
+  var animating = false;    // 換頁動畫是否進行中
+  var lastWheelTime = 0;    // 上一個滾輪事件的時間（毫秒）
+  var edgeCount = 0;        // 在第三頁頂端或底部「捲了幾下」
+  var THIRD = 2;            // 第三頁的索引
+  var GAP = 150;            // 兩個滾輪事件相隔超過 150 毫秒才算「新的一下」
+  var SWIPE = 50;           // 手機滑動超過 50px 才算換頁
+
+  // 被移動的容器：「捲動位置」= 容器往上移了多少
+  var $wrap = $('#wrap');
+
+  // ===== 小工具函式 =====
+  function vh() { return window.innerHeight; }                    // 一個畫面的高度
+  function pageTop(i) { return $(pages[i]).position().top; }      // 某頁在容器中的頂端位置
+  function thirdTop() { return pageTop(THIRD); }                  // 第三頁頂端
+  function thirdBottom() { return pageTop(THIRD) + vh(); }        // 第三頁「底部」時畫面的位置
+  function getPos() { return -(parseFloat($wrap.css('top')) || 0); } // 目前位置
+  function setPos(y) { $wrap.css('top', -y + 'px'); }                // 直接移到某位置
+  // 把位置限制在第三頁頂端與底部之間
+  function clampThird(y) { return Math.max(thirdTop(), Math.min(thirdBottom(), y)); }
+  function atTop() { return getPos() <= thirdTop() + 1; }
+  function atBottom() { return getPos() >= thirdBottom() - 1; }
+
+  // ===== 換頁：用 0.7 秒動畫滑到目標頁 =====
+  // toBottom 為 true 時，表示停在第三頁的底部（從第四頁回來時使用）
+  function goTo(index, toBottom) {
+    if (index < 0 || index >= pages.length) return; // 第一頁往上、第五頁往下不動作
+    animating = true;
+    edgeCount = 0;
+    var target = (index === THIRD && toBottom) ? thirdBottom() : pageTop(index);
+    $wrap.stop().animate({ top: -target }, 700, function () {
+      current = index;
+      animating = false;
+    });
+  }
+
+  // 第三頁在邊緣往外捲：累計兩下才換頁
+  function edgeStep(dir) {
+    edgeCount++;
+    if (edgeCount >= 2) {
+      if (dir > 0) goTo(THIRD + 1);         // 底部往下兩下 → 第四頁
+      else goTo(THIRD - 1);                 // 頂端往上兩下 → 第二頁
+    }
+  }
+
+  // ===== 滑鼠滾輪 =====
+  window.addEventListener('wheel', function (e) {
+    e.preventDefault();                     // 取消瀏覽器原本的捲動
+
+    var now = Date.now();
+    var isNew = (now - lastWheelTime) > GAP; // 是不是「新的一下」
+    lastWheelTime = now;                     // 每個事件都更新時間
+
+    if (animating) return;                   // 動畫中不理會捲動
+
+    var dir = e.deltaY > 0 ? 1 : -1;         // 1 = 往下，-1 = 往上
+
+    // --- 一般頁：一下換一頁 ---
+    if (current !== THIRD) {
+      if (!isNew) return;
+      if (current + dir === THIRD) goTo(THIRD, dir < 0); // 從第四頁往上回來時停在底部
+      else goTo(current + dir);
+      return;
+    }
+
+    // --- 第三頁 ---
+    if (dir > 0 && atBottom()) {             // 在底部繼續往下
+      if (isNew) edgeStep(1);
+      return;
+    }
+    if (dir < 0 && atTop()) {                // 在頂端繼續往上
+      if (isNew) edgeStep(-1);
+      return;
+    }
+    // 不在邊緣（或往內捲）：捲多少移多少，不超過頂端與底部
+    setPos(clampThird(getPos() + e.deltaY));
+    if (!atTop() && !atBottom()) edgeCount = 0; // 離開邊緣就歸零
+  }, { passive: false });
+
+  // ===== 手機觸控 =====
+  var startY = 0, startPos = 0, startAtTop = false, startAtBottom = false;
+
+  window.addEventListener('touchstart', function (e) {
+    startY = e.touches[0].clientY;
+    startPos = getPos();
+    startAtTop = (current === THIRD) && atTop();
+    startAtBottom = (current === THIRD) && atBottom();
+  }, { passive: false });
+
+  window.addEventListener('touchmove', function (e) {
+    e.preventDefault();
+    if (animating || current !== THIRD) return;
+    // 第三頁：畫面跟著手指移動（手指往上滑 → 畫面往下）
+    var dy = startY - e.touches[0].clientY;
+    setPos(clampThird(startPos + dy));
+    if (!atTop() && !atBottom()) edgeCount = 0; // 離開邊緣就歸零
+  }, { passive: false });
+
+  window.addEventListener('touchend', function (e) {
+    if (animating) return;
+    var dy = startY - e.changedTouches[0].clientY; // 正值 = 往上滑（往下一頁）
+    if (Math.abs(dy) <= SWIPE) return;             // 沒超過 50px 不算
+    var dir = dy > 0 ? 1 : -1;
+
+    if (current !== THIRD) {
+      if (current + dir === THIRD) goTo(THIRD, dir < 0);
+      else goTo(current + dir);
+      return;
+    }
+    // 第三頁：只有一開始就在邊緣、又往外滑，才算在邊緣「捲一下」
+    if (dir > 0 && startAtBottom) edgeStep(1);
+    else if (dir < 0 && startAtTop) edgeStep(-1);
+  }, { passive: false });
+
+  // ===== 視窗大小改變時，重新對齊目前頁 =====
+  $(window).on('resize', function () {
+    if (animating) return;
+    if (current === THIRD) setPos(clampThird(getPos()));
+    else setPos(pageTop(current));
+  });
+
+  // 開始時位於第一頁
+  setPos(0);
+});
+</script>
+</body>
+</html>
