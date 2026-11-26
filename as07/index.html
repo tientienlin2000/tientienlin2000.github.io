@@ -113,7 +113,7 @@ body.in-story #float{opacity:.28}
 .story .segs span{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.3);overflow:hidden}
 .story .segs i{display:block;height:100%;width:0;background:#fff}
 .story .tag-city{position:absolute;top:32px;left:16px;font-size:13px;font-weight:700;z-index:5;opacity:.85}
-.slide{position:absolute;inset:0;padding:90px 8vw 110px;display:flex;flex-direction:column;justify-content:center;opacity:0;transform:translateY(30px) scale(.98);transition:opacity .5s,transform .5s;pointer-events:none}
+.slide{position:absolute;inset:0;padding:90px 8vw 110px;display:flex;flex-direction:column;justify-content:center;opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .9s cubic-bezier(.22,.61,.36,1);pointer-events:none}
 .slide.on{opacity:1;transform:none;pointer-events:auto}
 .blob{position:absolute;border-radius:50%;z-index:0;animation:spin 30s linear infinite}
 .blob.sq{border-radius:28%}
@@ -523,9 +523,23 @@ function stops() {
   return list;
 }
 let stepLock = false;
+/* 可調參數：STEP_MS 換頁時間（毫秒），越大越慢越滑順；WHEEL_SENS 滾輪靈敏度，越大要滑越多才會換頁 */
+const STEP_MS = 1100, WHEEL_SENS = 60;
 function inZone() {
   const first = stories[0].offsetTop, last = stories[stories.length - 1];
   return scrollY >= first - 5 && scrollY <= last.offsetTop + last.offsetHeight - innerHeight + 5;
+}
+const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+function glideTo(target) {
+  const from = scrollY, dist = target - from, t0 = performance.now();
+  stepLock = true;
+  const frame = now => {
+    const t = Math.min(1, (now - t0) / STEP_MS);
+    scrollTo({ top: from + dist * ease(t), behavior: "instant" });
+    if (t < 1) requestAnimationFrame(frame);
+    else setTimeout(() => { stepLock = false; wheelAcc = 0; }, 180);
+  };
+  requestAnimationFrame(frame);
 }
 function step(dir) {
   const s = stops();
@@ -536,14 +550,15 @@ function step(dir) {
   if (j < 0) target = document.getElementById("wrapped").offsetTop;
   else if (j >= s.length) target = document.getElementById("ending").offsetTop;
   else target = s[j];
-  stepLock = true;
-  scrollTo({ top: target, behavior: "smooth" });
-  setTimeout(() => { stepLock = false; }, 700);
+  glideTo(target);
 }
+let wheelAcc = 0;
 addEventListener("wheel", e => {
-  if (!inZone() || Math.abs(e.deltaY) < 4) return;
+  if (!inZone()) return;
   e.preventDefault();
-  if (!stepLock) step(e.deltaY > 0 ? 1 : -1);
+  if (stepLock) return;
+  wheelAcc += e.deltaY;
+  if (Math.abs(wheelAcc) >= WHEEL_SENS) { const d = wheelAcc > 0 ? 1 : -1; wheelAcc = 0; step(d); }
 }, { passive: false });
 let touchY = null;
 addEventListener("touchstart", e => { touchY = inZone() ? e.touches[0].clientY : null; }, { passive: true });
