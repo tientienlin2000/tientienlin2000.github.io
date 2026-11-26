@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2026 競選歌回顧｜六座城市，十二首歌</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#121212; --panel:#181818; --row:#2a2a2a; --text:#ffffff; --muted:#b3b3b3; --line:#2f2f2f;
+  --A:#ffb627; --B:#b9a6ff; --play:#f4f0e6;
+  --t-地景:#7fd1ff; --t-政績:#ffd166; --t-政見:#ff8fa3; --t-願景:#c3f584; --t-情感:#ffffff;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:#121212}
+body{margin:0;background:transparent;color:var(--text);font-family:"Noto Sans TC",system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.75;letter-spacing:.04em;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+.todo{outline:1px dashed rgba(255,255,255,.45);outline-offset:2px;opacity:.75}
+
+/* ---------- 播放清單 ---------- */
+.pl-hero{display:flex;gap:28px;align-items:flex-end;padding:88px 40px 28px;background:linear-gradient(180deg,#5a3a1a 0%,#2a1f19 70%,var(--bg) 100%)}
+.cover{flex:0 0 232px;height:232px;border-radius:6px;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--A),#ff6b3d 48%,#6b4bd6 52%,var(--B));box-shadow:0 8px 40px rgba(0,0,0,.6)}
+.cover .disc{position:absolute;width:150px;height:150px;border-radius:50%;background:repeating-radial-gradient(circle,#111 0 3px,#1c1c1c 3px 6px);top:22px}
+.cover .disc::after{content:"";position:absolute;inset:56px;border-radius:50%;background:var(--A)}
+.cover .disc.b{left:auto;right:-30px;top:60px}
+.cover .disc.b::after{background:var(--B)}
+.cover .disc.a{left:-30px}
+.cover .cv-t{position:absolute;left:14px;bottom:10px;font-weight:900;font-size:24px;line-height:1.25;letter-spacing:.04em;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.pl-meta .kind{font-size:14px;font-weight:700}
+.pl-meta h1{margin:6px 0 12px;font-size:clamp(34px,5.6vw,72px);font-weight:900;line-height:1.1;letter-spacing:.02em}
+.pl-meta .sub-t{font-size:clamp(17px,2.1vw,24px);font-weight:700;margin:0 0 14px;letter-spacing:.08em}
+.pl-meta .desc{margin:0 0 10px;color:#e6e0d8;font-size:14px;line-height:1.85;max-width:62ch}
+.pl-meta .by{font-size:14px;color:var(--muted)}
+.pl-meta .by b{color:var(--text)}
+.pl-actions{display:flex;align-items:center;gap:22px;padding:20px 40px}
+.bigplay{flex:0 0 60px;width:60px;height:60px;border-radius:50%;border:0;background:var(--play);color:#111;display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.bigplay:hover{transform:scale(1.06)}
+.bigplay svg{width:26px;height:26px}
+.pl-actions .hint{color:var(--muted);font-size:14px}
+
+.tracks{padding:0 40px 60px;letter-spacing:normal;line-height:1.6}
+.pl-actions .hint{letter-spacing:normal;line-height:1.6}
+.tr-head,.tr{display:grid;grid-template-columns:40px minmax(0,4fr) minmax(0,2fr) minmax(0,2fr);gap:16px;align-items:center;padding:0 16px}
+.tr-head{height:36px;color:var(--muted);font-size:13px;border-bottom:1px solid var(--line);margin-bottom:8px}
+
+.city-row{padding:18px 16px 6px;font-size:13px;font-weight:700;color:var(--muted);letter-spacing:2px}
+.tr{min-height:58px;border-radius:6px;background:none;border:0;width:100%;text-align:left;color:var(--muted);font-size:14px}
+.tr:hover,.tr:focus-visible{background:var(--row);outline:none}
+.tr .num{text-align:center;font-variant-numeric:tabular-nums}
+.tr .num .ico{display:none}
+.tr:hover .num .n{display:none}
+.tr:hover .num .ico{display:inline-flex}
+.tr .ttl{display:flex;align-items:center;gap:12px;min-width:0}
+.tr .art{flex:0 0 40px;height:40px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#111;font-size:15px}
+.tr .art.A{background:var(--A)}.tr .art.B{background:var(--B)}
+.ph{overflow:hidden;padding:0}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.tr .art.ph{box-shadow:0 0 0 2px var(--side)}
+#nowbar .art.ph{box-shadow:0 0 0 2px var(--side)}
+.card .hd b.ph{box-shadow:0 0 0 3px var(--side);width:44px;height:44px}
+.tr .name{color:var(--text);font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tr .who{font-size:13px}
+.tr.on .name{color:var(--play);font-weight:700}
+.tr.on .num .n{display:none}
+.tr.on .num .eq{display:inline-flex}
+.eq{display:none;gap:2px;align-items:flex-end;height:14px}
+.eq i{width:3px;background:var(--play);animation:eq 0.9s ease-in-out infinite}
+.eq i:nth-child(2){animation-delay:.2s}.eq i:nth-child(3){animation-delay:.4s}
+.paused .eq i{animation-play-state:paused}
+@keyframes eq{0%,100%{height:3px}50%{height:14px}}
+.tr.on:hover .num .eq{display:none}
+
+/* ---------- 懸浮歌詞 ---------- */
+#bgfade{position:fixed;inset:0;z-index:-1;background:#0d0d0d;opacity:0;transition:background-color .5s ease,opacity .4s ease}
+#float{position:fixed;inset:0;pointer-events:none;z-index:40;overflow:hidden;transition:opacity .4s}
+body.in-story #float{opacity:.28}
+.fw{position:absolute;font-weight:900;white-space:nowrap;opacity:0;animation:floatUp 7s ease-out forwards;text-shadow:0 4px 30px rgba(0,0,0,.6)}
+@keyframes floatUp{0%{opacity:0;transform:translateY(40px) scale(.9)}15%{opacity:.9}70%{opacity:.75}100%{opacity:0;transform:translateY(-160px) scale(1.05)}}
+@media (prefers-reduced-motion:reduce){.fw{animation:fadeOnly 5s forwards}@keyframes fadeOnly{0%,100%{opacity:0}20%,70%{opacity:.85}}}
+
+/* ---------- 正在播放 ---------- */
+#nowbar{position:fixed;left:0;right:0;bottom:0;height:76px;background:#000;border-top:1px solid #222;display:flex;align-items:center;gap:16px;padding:0 20px;z-index:60;transform:translateY(100%);transition:transform .3s}
+#nowbar.show{transform:none}
+#nowbar .art{flex:0 0 48px;height:48px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#111}
+#nowbar .info{min-width:0;flex:0 1 260px}
+#nowbar .info .t{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#nowbar .info .s{font-size:12px;color:var(--muted)}
+#nowbar .ctl{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+#nowbar .btns{display:flex;gap:18px;align-items:center}
+#nowbar .btns button{background:none;border:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+#nowbar .btns button:hover{color:#fff}
+#nowbar .btns .pp{background:var(--play);color:#111;border-radius:50%;width:36px;height:36px}
+#nowbar svg{width:18px;height:18px}
+#nowbar .prog{display:flex;align-items:center;gap:8px;width:min(560px,100%);font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+#nowbar .bar{flex:1;height:4px;border-radius:2px;background:#4d4d4d;overflow:hidden}
+#nowbar .bar i{display:block;height:100%;width:0;background:#fff}
+#nowbar .note{flex:0 1 220px;font-size:12px;color:var(--muted);text-align:right}
+#video{position:fixed;right:20px;bottom:92px;width:356px;height:200px;border-radius:8px;overflow:hidden;background:#000;z-index:55;box-shadow:0 10px 40px rgba(0,0,0,.6);display:none}
+#video.show{display:block}
+#video #yt{width:100%;height:100%}
+
+/* ---------- 年度回顧 ---------- */
+.wr-intro{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:0 8vw;background:radial-gradient(circle at 80% 20%,#ff5a36 0 18%,transparent 18.2%),radial-gradient(circle at 15% 85%,#6b2fd9 0 22%,transparent 22.2%);position:relative;overflow:hidden}
+.wr-intro .k{font-size:15px;letter-spacing:.12em;font-weight:700;color:var(--A)}
+.wr-intro h2{margin:10px 0 20px;font-size:clamp(36px,7vw,100px);line-height:1.15;font-weight:900;letter-spacing:.03em}
+.wr-intro p{font-size:16px;line-height:1.85;max-width:34ch;color:#ddd;margin:0}
+.wr-intro .down{margin-top:40px;font-size:14px;color:var(--muted)}
+
+.story{position:relative}
+.story .stage{position:sticky;top:0;height:100vh;overflow:hidden;transition:color .5s ease}
+.story .segs{position:absolute;top:16px;left:16px;right:16px;display:flex;gap:6px;z-index:5}
+.story .segs span{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.3);overflow:hidden}
+.story .segs i{display:block;height:100%;width:0;background:#fff}
+.story .tag-city{position:absolute;top:32px;left:16px;font-size:13px;font-weight:700;z-index:5;opacity:.85}
+.slide{position:absolute;inset:0;padding:90px 8vw 110px;display:flex;flex-direction:column;justify-content:center;opacity:0;transform:translateY(30px) scale(.98);transition:opacity .5s,transform .5s;pointer-events:none}
+.slide.on{opacity:1;transform:none;pointer-events:auto}
+.blob{position:absolute;border-radius:50%;z-index:0;animation:spin 30s linear infinite}
+.blob.sq{border-radius:28%}
+@keyframes spin{to{transform:rotate(360deg)}}
+.slide>*:not(.blob){position:relative;z-index:1}
+.slide .k{font-size:clamp(14px,1.6vw,18px);font-weight:900;margin-bottom:12px;letter-spacing:.12em}
+.slide h3{margin:0;font-size:clamp(52px,11vw,160px);line-height:1.05;font-weight:900;letter-spacing:.04em}
+.slide .vs{margin-top:24px;font-size:clamp(17px,2.3vw,27px);font-weight:900;line-height:1.7}
+.slide .vs em{font-style:normal;padding:0 .2em}
+.slide .vs .A{color:#111;background:var(--A)}.slide .vs .B{color:#111;background:var(--B)}
+.slide .playpair{margin-top:30px;align-self:flex-start;min-height:48px;padding:0 24px;border-radius:24px;border:0;background:#111;color:#fff;font-weight:700;font-size:15px;display:flex;gap:10px;align-items:center}
+.slide .playpair svg{width:16px;height:16px}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-top:20px}
+.card{background:#111;color:#fff;border-radius:16px;padding:24px 26px;display:flex;flex-direction:column;gap:12px}
+.card .hd{display:flex;align-items:center;gap:10px}
+.card .hd b{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#111;font-weight:900}
+.card .hd .tt{font-size:18px;font-weight:900;line-height:1.4}
+.card .hd .ww{font-size:13px;color:var(--muted)}
+.card p{margin:0;font-size:14.5px;line-height:1.85;color:#e8e8e8}
+.card .sub{font-size:12.5px;line-height:1.85;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:13px;line-height:1.6;padding:4px 12px;border-radius:14px;background:#262626;display:inline-flex;gap:8px;align-items:center;max-width:100%}
+.chip>span{flex:1 1 auto;min-width:0}
+.chip i{font-style:normal;font-size:11px;font-weight:900;color:#111;padding:2px 6px;border-radius:8px;white-space:nowrap;flex:0 0 auto;writing-mode:horizontal-tb}
+.len-row{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,5fr);gap:20px;align-items:center;margin-top:18px}
+.len-row .big{font-size:clamp(48px,8vw,110px);font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+.len-row .lb{font-size:16px;font-weight:700}
+.len-bar{height:34px;border-radius:17px;background:rgba(0,0,0,.25);overflow:hidden}
+.len-bar i{display:block;height:100%;border-radius:17px;width:0;transition:width 1s .2s}
+.slide.on .len-bar i{width:var(--w)}
+.slide .foot{margin-top:24px;font-size:16px;font-weight:700}
+.slide .concl{font-size:clamp(24px,4vw,52px);font-weight:900;line-height:1.55;max-width:22ch;letter-spacing:.03em}
+.mvlink{align-self:flex-start;color:#111;background:var(--play);border-radius:16px;padding:6px 14px;font-size:14px;font-weight:700;text-decoration:none}
+.mvlink:hover{filter:brightness(.9)}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;font-size:13px}
+
+/* ---------- 結尾、AI 聲明 ---------- */
+.ending{min-height:100vh;padding:100px 8vw;background:transparent;display:flex;flex-direction:column;justify-content:center;gap:20px}
+.ending .k{color:var(--A);font-weight:900;font-size:15px;letter-spacing:.12em}
+.ending h2{margin:0;font-size:clamp(30px,4.6vw,60px);font-weight:900;line-height:1.3;letter-spacing:.03em}
+.ending .stat{display:grid;grid-template-columns:72px minmax(0,1fr) 40px;gap:14px;align-items:center;font-size:14.5px;max-width:720px}
+.ending .stat .b{height:22px;border-radius:11px;background:#222;overflow:hidden}
+.ending .stat .b i{display:block;height:100%;border-radius:11px}
+.closing{max-width:760px;margin-top:28px;display:flex;flex-direction:column;gap:14px}
+.closing h3{margin:0;font-size:clamp(22px,2.8vw,32px);font-weight:900;letter-spacing:.06em}
+.closing p{margin:0;font-size:15.5px;line-height:2;color:#e6e6e6}
+.closing b{color:var(--A)}
+.ending .note{font-size:13px;color:var(--muted);max-width:60ch}
+.ai{min-height:100vh;padding:90px 8vw 120px;background:var(--play);color:#111;display:flex;flex-direction:column;justify-content:center}
+.ai .k{font-weight:900;letter-spacing:.16em;font-size:15px}
+.ai h2{font-size:clamp(32px,5.4vw,72px);margin:8px 0 28px;line-height:1.2;font-weight:900;letter-spacing:.04em}
+.ai dl{display:grid;grid-template-columns:140px minmax(0,1fr);gap:16px 28px;margin:0;max-width:900px;font-size:15px;line-height:1.95}
+.ai dt{font-weight:900}
+.ai dd{margin:0}
+.ai .sig{margin-top:36px;font-size:14px;color:#555}
+
+/* ---------- 精緻化 ---------- */
+body{text-rendering:optimizeLegibility}
+.pl-meta h1,.wr-intro h2,.slide h3,.ending h2,.ai h2{font-weight:800}
+.slide .concl{font-weight:700}
+.slide .vs em{padding:.05em .45em;border-radius:6px}
+.card{background:rgba(17,17,17,.92);border:1px solid rgba(255,255,255,.08);border-radius:18px;box-shadow:0 18px 40px rgba(0,0,0,.18);backdrop-filter:blur(6px)}
+.card .hd{padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.08)}
+.chip{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.06)}
+.chip i{font-weight:700;letter-spacing:.08em}
+.mvlink{font-weight:600;letter-spacing:.06em;padding:7px 16px}
+.fw{font-weight:700;letter-spacing:.06em;text-shadow:0 2px 18px rgba(0,0,0,.35)}
+.closing{padding-top:28px;border-top:1px solid rgba(255,255,255,.1)}
+.closing b{font-weight:700}
+.ending .stat .b{height:14px}
+.ending .stat .b i{border-radius:7px}
+.ai dl{border-top:1px solid rgba(0,0,0,.15);padding-top:24px}
+.ai dt{font-weight:700;letter-spacing:.1em}
+.blob{filter:blur(.3px)}
+.cover{border-radius:4px}
+
+@media (max-width:760px){
+  .pl-hero{flex-direction:column;align-items:flex-start;padding:60px 20px 20px}
+  .cover{flex-basis:auto;width:200px;height:200px}
+  .pl-actions,.tracks{padding-left:12px;padding-right:12px}
+  .tr-head{display:none}
+  .tr{grid-template-columns:28px minmax(0,1fr);gap:10px;padding:0 8px}
+  .tr .city,.tr .party{display:none}
+  .cards{grid-template-columns:minmax(0,1fr);gap:12px}
+  .card{padding:12px 14px;gap:8px;border-radius:12px}
+  .card .hd .tt{font-size:17px}
+  .card .hd b.ph{width:36px;height:36px}
+  .card .sub,.card p{font-size:12.5px;line-height:1.5}
+  .chips{gap:5px}
+  .chip{font-size:12.5px;padding:2px 9px}
+  .chip i{font-size:11px}
+  .mvlink{align-self:flex-start;color:#111;background:var(--play);border-radius:16px;padding:6px 14px;font-size:14px;font-weight:700;text-decoration:none}
+.mvlink:hover{filter:brightness(.9)}
+.legend{display:none}
+  .slide{padding:64px 16px 92px;justify-content:flex-start}
+  .slide .k{margin-bottom:4px}
+  .cards{margin-top:8px}
+  .len-row{grid-template-columns:minmax(0,1fr)}
+  #video{left:12px;right:12px;width:auto;height:calc((100vw - 24px)*.5625);max-height:200px;bottom:88px}
+  #nowbar .note,#nowbar .info{flex-basis:auto}
+  #nowbar .note{display:none}
+  .ai dl{grid-template-columns:minmax(0,1fr)}
+  .ai dt{margin-top:8px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== 開場：播放清單 ===================== -->
+<header class="pl-hero">
+  <div class="cover" aria-hidden="true">
+    <div class="disc a"></div><div class="disc b"></div>
+    <div class="cv-t">2026<br>競選歌回顧</div>
+  </div>
+  <div class="pl-meta">
+    <div class="kind">公開播放清單</div>
+    <h1>2026 競選歌回顧</h1>
+    <div class="sub-t">六座城市，十二首歌</div>
+    <p class="desc">本篇報導整理了 2026 年大選中，不只一位首長候選人推出競選歌曲的縣市，比較競選歌曲的相同與相異。</p>
+    <div class="by"><b>林天怡</b>・<span id="count"></span></div>
+  </div>
+</header>
+
+<div class="pl-actions">
+  <button class="bigplay" id="playAll" aria-label="從第一首開始播放">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>
+  </button>
+  <span class="hint">按下播放，或點任一首歌。往下捲動，看六座城市的回顧。</span>
+</div>
+
+<section class="tracks" aria-label="曲目">
+  <div class="tr-head"><span>#</span><span>標題</span><span>縣市</span><span>政黨</span></div>
+  <div id="list"></div>
+</section>
+
+<!-- ===================== 年度回顧 ===================== -->
+<section class="wr-intro" id="wrapped">
+  <div class="k">2026 競選歌回顧</div>
+  <h2>六座城市<br>十二首歌</h2>
+  <p>同一張選票上的兩個人，各自唱出一座什麼樣的城市？</p>
+  <div class="down">往下捲動 ↓</div>
+</section>
+<div id="stories"></div>
+
+<!-- ===================== 結尾（暫定，可替換） ===================== -->
+<section class="ending" id="ending">
+  <div class="k">十二首歌聽完了</div>
+  <h2>這些歌最常唱的是什麼？</h2>
+  <div id="stats"></div>
+  <p class="note">依每首歌的內容標籤計算，一首歌可以同時有好幾類。</p>
+  <div class="closing">
+    <h3>歌唱給誰聽</h3>
+    <p>從歌詞、語言與曲風，可以看出候選人各自想連結的對象。</p>
+    <p><b>年輕族群</b>：4 首歌直接對年輕人說話。有的採用說唱、舞曲等年輕人熟悉的曲風，歌詞談 AI、創業與工作；有的以青年返鄉為主題，或把「新的世代」放進歌名。</p>
+    <p><b>台語使用者</b>：5 首歌以台語為主，或含完整的台語段落。這些段落多描寫勞動者、長輩與家庭，可推論台語是用來連結在地與基層選民。</p>
+    <p><b>客家族群</b>：只有台北、桃園各 1 首歌出現客語，而且都只有一句。份量雖少，仍可視為向客家選民表示「也包括你」。</p>
+    <p>整體而言，12 首歌傳達的多是認同與情感，具體政績或政見只出現在少數歌曲中。競選歌反映的是候選人想爭取哪些選民，而不是他們打算怎麼施政。</p>
+  </div>
+</section>
+
+<!-- ===================== AI 使用聲明（100vh） ===================== -->
+<footer class="ai">
+  <div class="k">AI 使用聲明</div>
+  <h2>這篇報導怎麼做的</h2>
+  <dl>
+    <dt>作者負責</dt><dd>選題與報導角度；整體視覺與互動設計，包括播放清單開場與年度回顧的形式；資料蒐集，包括 12 首歌的歌詞、MV 連結與候選人照片；所有內容的最終判斷與修改。</dd>
+    <dt>AI 協助</dt><dd>使用 Anthropic Claude 撰寫網頁程式碼；依作者提供的歌詞整理關鍵字與分類初稿、撰寫報導文字初稿，皆由作者修改、確認；另協助查詢選票號次與部分歌曲的新聞報導，並裁切照片。</dd>
+    <dt>中立原則</dt><dd>同一縣市的兩首歌依選票號次排列、篇幅相等，配色避開政黨代表色，不評價候選人或歌曲優劣。歌詞僅摘錄關鍵字，完整歌曲請見官方 MV。</dd>
+  </dl>
+  <div class="sig">林天怡｜臺大新聞所｜調查報導課程作業｜2026 年 11 月</div>
+</footer>
+
+<div id="bgfade" aria-hidden="true"></div>
+<div id="float" aria-hidden="true"></div>
+<div id="video"><div id="yt"></div></div>
+<div id="nowbar" role="region" aria-label="正在播放">
+  <div class="art" id="nbArt"></div>
+  <div class="info"><div class="t" id="nbT"></div><div class="s" id="nbS"></div></div>
+  <div class="ctl">
+    <div class="btns">
+      <button id="prev" aria-label="上一首"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+      <button id="pp" class="pp" aria-label="播放或暫停"><svg viewBox="0 0 24 24" fill="currentColor" id="ppIco"><path d="M7 4.5v15l13-7.5z"/></svg></button>
+      <button id="next" aria-label="下一首"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+    </div>
+    <div class="prog"><span id="cur">0:00</span><div class="bar"><i id="barI"></i></div><span id="tot">0:00</span></div>
+  </div>
+  <div class="note" id="nbNote"></div>
+</div>
+
+<script>
+/* =========================================================
+   資料區：只要改這裡
+   - no：選票號次，填好後同一縣市兩首歌會自動依號次排序
+   - yt：YouTube 影片 ID（網址 watch?v= 後面那串）
+   - photo：候選人照片路徑，例如 "img/tpe-a.jpg"（放在網頁同一層的 img 資料夾）
+       沒填時顯示 A／B 色塊
+   - lyrics：想懸浮顯示的歌詞片段（短句即可）。
+       可以只填文字 ["…","…"]，會依序輪播；
+       也可以填 {t:秒數, text:"…"}，會在播放到該秒數時出現。
+     沒填時，改用 words（主題關鍵字）。
+   - 標「待填」的欄位在畫面上會有虛線框
+   ========================================================= */
+const TODO = "待填";
+const CITIES = [
+  { name:"台北市", bg:"#f2504b", ink:"#111",
+    conclusion:"一首把四年政績逐條唱成清單，一首一項政策都沒提，只反覆唱「順起來」。兩首都把候選人名字的一個字藏進歌裡。",
+    songs:[
+      { title:"台北安可", who:"蔣萬安", party:"中國國民黨", incumbent:true, no:5, photo:"img/tpe-a.jpg", yt:"uKCiYJdv6Zg", dur:"",
+        lang:"華語（夾英文 YouBike、AI）", 
+        tags:[["政績","YouBike、捷運延伸、大巨蛋"],["政績","北士科、國際賽事、都更"],["政績","無菸城市、免費營養午餐、幸福住宅"],["願景","結尾轉向「下一站的台北」"],["情感","副歌反覆「台北，安可」"]],
+        note:"歌詞沒有直接唱出候選人名字；歌名「安可」與「萬安」的「安」同字，宣傳主視覺也特別標亮這個字。",
+        words:["安可","YouBike","捷運","大巨蛋","北士科","都更","無菸台北","免費午餐","幸福住宅","下一站"], lyrics:[] },
+      { title:"台北順起來", who:"沈伯洋", party:"民主進步黨", incumbent:false, no:3, photo:"img/tpe-b.jpg", yt:"wZoV0jJ_cTQ", dur:"",
+        lang:"華語為主；英語、台語、客語各一句口號", 
+        tags:[["願景","把「卡住」的城市「解開」"],["願景","新的台北、美感"],["情感","「台北」與歌名反覆，橋段連唱四次"],["情感","四種語言喊同一句口號"]],
+        note:"歌詞沒有提到任何具體政策或建設；沒有直接唱出候選人名字，但「洋流」的「洋」與「伯洋」同字。",
+        words:["順起來","卡住","解開","Future soon","作伙來","共下來","洋流","美感","我的家"], lyrics:[] } ] },
+  { name:"新北市", bg:"#ff8c2a", ink:"#111",
+    conclusion:"兩首都沒唱政見。一首唱各行各業的「新北人」，用台語；一首唱新北的山海地名，再把候選人名字連喊四次。",
+    songs:[
+      { title:"勇敢想勇敢做", who:"李四川", party:"中國國民黨", incumbent:false, no:3, photo:"img/ntpc-a.jpg", yt:"aOG1skw9QGM", dur:"2:59",
+        lang:"台語為主", 
+        tags:[["情感","各行各業「新北人」的打拚"],["情感","起起落落、黑暗中找出口"],["情感","以身為新北人為傲"],["情感","副歌「川好勢」"]],
+        note:"候選人表示歌裡沒有放政見；歌詞也沒有任何政策或建設。",
+        words:["勇敢想","勇敢做","川好勢","新北人","為生活","為理想","出頭天"], lyrics:[] },
+      { title:"你我作伙拚未來", who:"蘇巧慧", party:"民主進步黨", incumbent:false, no:1, photo:"img/ntpc-b.jpg", yt:"-uDH1NwjZ8g", dur:"",
+        lang:"華語為主，夾台語（蓋可愛、作伙）", 
+        tags:[["地景","山嵐、海，從最北的石門唱到南邊的烏來"],["地景","新北是「百寶箱」"],["願景","年輕活力、溫暖創新、新時代"],["情感","「巧慧」連喊四次，加上暱稱「水獺媽媽」"]],
+        note:"歌詞沒有提到任何具體政策或建設；候選人名字直接唱進歌裡，和「新北」交替反覆。",
+        words:["石門","烏來","百寶箱","巧慧","水獺媽媽","作伙","拚未來"], lyrics:[] } ] },
+  { name:"桃園市", bg:"#f5cf3a", ink:"#111",
+    conclusion:"兩首都沒有點名任何政績或政見。一首華台語各一段，唱四年打拚與「實實在在建設」；一首華語為主、結尾加台客語，唱老街溪、埤塘與公車。",
+    songs:[
+      { title:"桃園 有你來挺", who:"張善政", party:"中國國民黨", incumbent:true, no:2, photo:"img/tyn-a.jpg", yt:"2bE3ZYpPDTY", dur:"",
+        lang:"華語、台語各一段，夾英文 Team", 
+        tags:[["情感","四年努力過的路、一步一步走到眼前"],["情感","台語段：流汗打拚、毋講白賊話、無愛搬戲"],["政績","只以「實實在在建設桃園」概括，不點名項目"],["願景","讓桃園迎著光向前、我們都是 Team桃園"]],
+        note:"官方標為競選主題曲。另有〈善，讓我們靠近〉（華語，唱陪伴與珍珠海岸、山城），以「善良」「善意」嵌入名字的「善」。兩首都沒有把具體政績寫進歌詞。",
+        words:["有你來挺","四年","流汗打拚","毋講白賊話","Team桃園","迎著光向前"], lyrics:[] },
+      { title:"心桃園 動起來", who:"黃世杰", party:"民主進步黨", incumbent:false, no:1, photo:"img/tyn-b.jpg", yt:"F6U5S3jMmYI", dur:"3:16",
+        lang:"華語為主，結尾台語、客語各一句", 
+        tags:[["地景","老街溪、埤塘、公車"],["願景","科技求新求變、無盡可能的未來"],["情感","放心有你在、溫暖的手握住日常"],["情感","與這座城市一起成長"]],
+        note:"歌詞沒有具體政見；最後一段用台語、客語各唱一句，與〈台北順起來〉多語喊口號的做法相近。",
+        words:["老街溪","埤塘","公車","動起來","科技","放心有你在","與這座城市一起成長"], lyrics:[] } ] },
+  { name:"台中市", bg:"#45b86f", ink:"#111",
+    conclusion:"兩首都唱山與海，也都沒有政見。一首用華語說唱唱年輕人自己做主，最後喊「選對人」；一首華台語混唱，點名后里馬場、梧棲漁港和太陽餅，把「純」藏進「純真的笑容」。",
+    songs:[
+      { title:"走對路", who:"江啟臣", party:"中國國民黨", incumbent:false, no:3, photo:"img/txg-a.jpg", yt:"tnVvGdvoYjI", dur:"2:50",
+        lang:"華語（夾英文 AI 與 One 到 Five 數數）", 
+        tags:[["情感","年輕人自己做主、不怕輸不認輸"],["願景","機會不只留給有錢人、AI 時代腦袋要更新"],["情感","創業、學成、加班、等末班車的小人物"],["願景","從街頭唱到世界、讓全世界聽見"],["地景","只有概括的「山線的風、海線的浪聲」「臺中城」"]],
+        note:"歌詞沒有唱出候選人名字，也沒有具體政見。副歌反覆「走對路」，結尾用 One 到 Five 數數串起夢想、方向、心願，最後一句是「走對路！選對人」，是目前唯一直接喊投票的歌詞。",
+        words:["走對路","自己做主","不怕輸","AI 時代","小人物","讓全世界聽見","選對人"], lyrics:[] },
+      { title:"咱的台中咱來顧", who:"何欣純", party:"民主進步黨", incumbent:false, no:1, photo:"img/txg-b.jpg", yt:"0i4SejgpdhA", dur:"",
+        lang:"華語、台語混用（咱、免驚、鬥陣、拍拼、古意），夾英文 you are my sunshine", 
+        tags:[["地景","東邊高山、西邊海洋、晴朗天氣"],["地景","后里馬場、梧棲漁港、傳統市場"],["地景","珍珠奶茶、像小太陽的糕餅"],["情感","咱是可愛、拍拼、古意擱趣味的台中人"],["情感","「純真的笑容」嵌入名字的「純」"],["願景","重新想像、心存希望、未來交予囡仔"]],
+        note:"歌詞沒有具體政見，也沒有直接唱出候選人名字。副歌反覆「咱的台中咱來顧」，用「咱」把聽眾拉進來。",
+        words:["后里馬場","梧棲漁港","珍珠奶茶","小太陽","咱來顧","台中人","心存希望","you are my sunshine"], lyrics:[] } ] },
+  { name:"台南市", bg:"#3d7ce8", ink:"#fff",
+    conclusion:"一首用華語從四百年前唱到智慧農業，是最接近政策的一首；一首用台語從春天唱到冬天，把台南人比成風箏，帶著台灣的夢飛。",
+    songs:[
+      { title:"驕傲台南", who:"謝龍介", party:"中國國民黨", incumbent:false, no:2, photo:"img/tnn-a.jpg", yt:"8l0y20NnrXk", dur:"",
+        lang:"華語（Rap 段夾英文 AI）", 
+        tags:[["地景","安平、大員、府城、城門、車站、古道"],["情感","四百、三百、兩百、一百年前的台南史"],["情感","「我們是古都，不是破舊」"],["政見","智慧農業、AI 看天候、科技走進農村"],["願景","青年回鄉、智慧城市、讓產品走向遠方"]],
+        note:"另有〈我在台南有個家〉〈府城彼盞燈〉。這首沒有唱出候選人名字。",
+        words:["安平","大員","府城","四百年","古都","智慧農業","台南向前行","驕傲"], lyrics:[] },
+      { title:"風吹風吹台南起妃", who:"陳亭妃", party:"民主進步黨", incumbent:false, no:3, photo:"img/tnn-b.jpg", yt:"QXFx8NmayC4", dur:"3:47",
+        lang:"台語", 
+        tags:[["地景","嘉南平原、台南每一片土地、海邊的浪"],["情感","春、夏、秋、冬四季的風"],["情感","阿母、厝邊阿伯，為這個家打拚的人"],["情感","台南人像一隻一隻的風吹（風箏）"],["願景","隨民主與歷史的風飛、帶台南與台灣的夢來飛"]],
+        note:"發布於 2025 年黨內初選期間。歌詞沒有具體政見；歌名「起妃」與副歌反覆的「飛」同音，把名字的「妃」藏進歌裡。",
+        words:["風吹","嘉南平原","四季的風","阿母","厝邊阿伯","民主的風","台南的夢","台灣的夢"], lyrics:[] } ] },
+  { name:"雲林縣", bg:"#7a4fd8", ink:"#fff",
+    conclusion:"兩首都從土地與人出發。依報導，一首唱一代代人的打拚與傳承；另一首先唱人口外流與醫療不足，再唱「我能改變什麼」，是唯一把家鄉寫成需要改變的歌。",
+    songs:[
+      { title:"咱的雲林・新的世代", who:"張嘉郡", party:"中國國民黨", incumbent:false, no:null, photo:"img/yun-a.jpg", yt:"CBFYv2mNSCk", dur:"",
+        lang:"台語", 
+        tags:[["地景","雲林風景（依報導）"],["情感","一代代雲林人生活、打拚與傳承（依報導）"],["情感","競選團隊稱不唱候選人姓名與口號"]],
+        note:"本團隊未取得完整歌詞，內容依 2026 年 9 月 8 日發布時的新聞報導歸納。",
+        words:["咱的雲林","新的世代","人與土地","傳承","打拚"], lyrics:[] },
+      { title:"雲林的驕傲", who:"劉建國", party:"民主進步黨", incumbent:false, no:null, photo:"img/yun-b.jpg", yt:"COKBCHOOSfQ", dur:"",
+        lang:"華語為主，夾台語（囡仔、免、親像）", 
+        tags:[["地景","田園、稻浪、海聲，「雲朵彩霞靠著樹林」嵌入縣名"],["情感","累了就回來，這裡有你的所在"],["政見","點出人口外流、醫療不足、「荒蕪之地」"],["願景","我就能做些什麼、團結的力量"]],
+        note:"歌詞沒有唱出候選人名字，也沒有具體政見；是 12 首中唯一先唱家鄉問題、再唱「我能改變」的歌。",
+        words:["雲林的驕傲","親像囡仔在走路","累了就回來","離鄉背井","醫療救助","團結的力量"], lyrics:[] } ] }
+];
+const TAG_TYPES = ["地景","政績","政見","願景","情感"];
+const DEMO_SECONDS = 30; // 沒有 YouTube ID 時的示意播放長度
+
+/* ---------- 工具 ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const isTodo = v => !v || v === TODO;
+const show = v => isTodo(v) ? `<span class="todo">${TODO}</span>` : esc(v);
+const toSec = d => { if (isTodo(d)) return null; const [m,s] = d.split(":").map(Number); return m*60 + s; };
+const fmt = s => { s = Math.max(0, Math.round(s||0)); return Math.floor(s/60) + ":" + String(s%60).padStart(2,"0"); };
+const badge = s => s.photo ? `<img src="${esc(s.photo)}" alt="${esc(s.who)}">` : esc(s.side);
+const tagColor = t => getComputedStyle(document.documentElement).getPropertyValue("--t-"+t).trim() || "#fff";
+
+/* 依號次排序，並攤平成播放序列 */
+CITIES.forEach(c => {
+  if (c.songs.every(s => s.no != null)) c.songs.sort((a,b) => a.no - b.no);
+  c.songs.forEach((s,i) => { s.side = i === 0 ? "A" : "B"; s.city = c.name; });
+});
+const QUEUE = CITIES.flatMap(c => c.songs);
+$("#count").textContent = `${QUEUE.length} 首歌・${CITIES.length} 座城市`;
+
+/* ---------- 曲目列表 ---------- */
+const playIco = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>';
+let html = "", n = 0;
+CITIES.forEach(c => {
+  html += `<div class="city-row">${esc(c.name)}</div>`;
+  c.songs.forEach(s => {
+    const i = n++;
+    html += `<button class="tr" data-i="${i}" aria-label="播放 ${esc(s.title)}，${esc(s.who)}">
+      <span class="num"><span class="n">${i+1}</span><span class="ico">${playIco}</span><span class="eq"><i></i><i></i><i></i></span></span>
+      <span class="ttl"><span class="art ${s.side}${s.photo ? " ph" : ""}" style="--side:var(--${s.side})">${badge(s)}</span>
+        <span style="min-width:0"><div class="name">〈${esc(s.title)}〉</div><div class="who">${esc(s.who)}${s.incumbent ? "・現任" : ""}</div></span></span>
+      <span class="city">${esc(s.city)}</span>
+      <span class="party">${esc(s.party)}</span>
+    </button>`;
+  });
+});
+$("#list").innerHTML = html;
+document.querySelectorAll(".tr").forEach(b => b.addEventListener("click", () => {
+  const i = +b.dataset.i; i === cur && playing ? pause() : play(i);
+}));
+
+/* ---------- 年度回顧：每座城市 4 張 ---------- */
+const SLIDES = 3;
+const blobs = (c1, c2) => `<div class="blob" style="width:52vmin;height:52vmin;right:-12vmin;top:-10vmin;background:${c1};opacity:.35"></div>
+  <div class="blob sq" style="width:34vmin;height:34vmin;left:-8vmin;bottom:-8vmin;background:${c2};opacity:.3"></div>`;
+const head = s => `<div class="hd"><b class="${s.photo ? "ph" : ""}" style="background:var(--${s.side});--side:var(--${s.side})">${badge(s)}</b>
+  <div><div class="tt">〈${esc(s.title)}〉</div><div class="ww">${esc(s.who)}｜${esc(s.party)}${s.incumbent ? "｜現任" : ""}</div></div></div>`;
+
+$("#stories").innerHTML = CITIES.map((c, ci) => {
+  const [A, B] = c.songs;
+  const chips = s => s.tags.map(([t, x]) => `<span class="chip"><i style="background:${tagColor(t)}">${t}</i><span>${show(x)}</span></span>`).join("");
+  return `<section class="story" style="height:${SLIDES*100}vh" data-ci="${ci}">
+    <div class="stage" style="color:${c.ink}">
+      <div class="segs">${"<span><i></i></span>".repeat(SLIDES)}</div>
+      <div class="tag-city">${String(ci+1).padStart(2,"0")}／${CITIES.length}　${esc(c.name)}</div>
+
+      <div class="slide">${blobs("#fff", "#111")}
+        <div class="k">第 ${ci+1} 站</div>
+        <h3>${esc(c.name)}</h3>
+        <div class="vs"><em class="A">〈${esc(A.title)}〉</em> 與 <em class="B">〈${esc(B.title)}〉</em></div>
+        <button class="playpair" data-play="${QUEUE.indexOf(A)}">${playIco} 播放這兩首</button>
+      </div>
+
+
+
+      <div class="slide">${blobs("#111", "#fff")}
+        <div class="k">歌詞唱了什麼</div>
+        <div class="cards">
+          ${[A, B].map(s => `<div class="card">${head(s)}
+            ${isTodo(s.lang) ? "" : `<div class="sub">語言：${esc(s.lang)}</div>`}
+            <div class="chips">${chips(s)}</div>
+            ${s.note ? `<div class="sub">${esc(s.note)}</div>` : ""}
+            ${s.yt ? `<a class="mvlink" href="https://www.youtube.com/watch?v=${esc(s.yt)}" target="_blank" rel="noopener">觀看官方 MV ↗</a>` : `<span class="sub todo">MV 連結待填</span>`}</div>`).join("")}
+        </div>
+        <div class="legend">${TAG_TYPES.map(t => `<span class="chip"><i style="background:${tagColor(t)}">${t}</i></span>`).join("")}</div>
+      </div>
+
+      <div class="slide">${blobs("#fff", "#111")}
+        <div class="k">一句話比較</div>
+        <div class="concl">${esc(c.conclusion)}</div>
+      </div>
+    </div>
+  </section>`;
+}).join("");
+document.querySelectorAll(".playpair").forEach(b => b.addEventListener("click", () => play(+b.dataset.play)));
+
+/* 捲動驅動：進度條 + 切換 slide */
+const stories = [...document.querySelectorAll(".story")];
+/* 背景色漸變：依畫面中央所在的段落換色 */
+const bgEl = document.getElementById("bgfade");
+const bgStops = [[document.getElementById("wrapped"), "#0d0d0d"], ...stories.map((st, i) => [st, CITIES[i].bg]), [document.getElementById("ending"), "#0d0d0d"]];
+function updateBg(vh) {
+  const mid = vh / 2;
+  if (bgStops[0][0].getBoundingClientRect().top > mid) { bgEl.style.opacity = 0; return; }
+  bgEl.style.opacity = 1;
+  for (const [el, col] of bgStops) {
+    const r = el.getBoundingClientRect();
+    if (r.top <= mid && r.bottom > mid) { bgEl.style.backgroundColor = col; break; }
+  }
+}
+function onScroll() {
+  const vh = innerHeight;
+  stories.forEach(st => {
+    const r = st.getBoundingClientRect();
+    const p = Math.min(1, Math.max(0, -r.top / (r.height - vh)));
+    const idx = Math.min(SLIDES - 1, Math.floor(p * SLIDES));
+    st.querySelectorAll(".segs i").forEach((el, i) => el.style.width = (Math.min(1, Math.max(0, p*SLIDES - i)) * 100) + "%");
+    st.querySelectorAll(".slide").forEach((el, i) => el.classList.toggle("on", i === idx));
+  });
+  updateBg(vh);
+  document.body.classList.toggle("in-story", stories.some(st => { const r = st.getBoundingClientRect(); return r.top < vh*.5 && r.bottom > vh*.5; }));
+}
+addEventListener("scroll", onScroll, { passive:true });
+addEventListener("resize", onScroll);
+onScroll();
+/* 防止一次滑太多：在回顧區內，滾輪或滑動一次只前進／後退一張 */
+function stops() {
+  const vh = innerHeight, list = [];
+  stories.forEach(st => {
+    const span = st.offsetHeight - vh;
+    for (let i = 0; i < SLIDES; i++) list.push(st.offsetTop + span * (i + 0.5) / SLIDES);
+  });
+  return list;
+}
+let stepLock = false;
+function inZone() {
+  const first = stories[0].offsetTop, last = stories[stories.length - 1];
+  return scrollY >= first - 5 && scrollY <= last.offsetTop + last.offsetHeight - innerHeight + 5;
+}
+function step(dir) {
+  const s = stops();
+  let i = 0, best = Infinity;
+  s.forEach((y, k) => { const d = Math.abs(y - scrollY); if (d < best) { best = d; i = k; } });
+  const j = i + dir;
+  let target;
+  if (j < 0) target = document.getElementById("wrapped").offsetTop;
+  else if (j >= s.length) target = document.getElementById("ending").offsetTop;
+  else target = s[j];
+  stepLock = true;
+  scrollTo({ top: target, behavior: "smooth" });
+  setTimeout(() => { stepLock = false; }, 700);
+}
+addEventListener("wheel", e => {
+  if (!inZone() || Math.abs(e.deltaY) < 4) return;
+  e.preventDefault();
+  if (!stepLock) step(e.deltaY > 0 ? 1 : -1);
+}, { passive: false });
+let touchY = null;
+addEventListener("touchstart", e => { touchY = inZone() ? e.touches[0].clientY : null; }, { passive: true });
+addEventListener("touchmove", e => { if (touchY !== null) e.preventDefault(); }, { passive: false });
+addEventListener("touchend", e => {
+  if (touchY === null) return;
+  const dy = touchY - e.changedTouches[0].clientY;
+  touchY = null;
+  if (Math.abs(dy) > 30 && !stepLock) step(dy > 0 ? 1 : -1);
+}, { passive: true });
+addEventListener("keydown", e => {
+  if (!inZone()) return;
+  if (["ArrowDown", "PageDown", " "].includes(e.key)) { e.preventDefault(); if (!stepLock) step(1); }
+  if (["ArrowUp", "PageUp"].includes(e.key)) { e.preventDefault(); if (!stepLock) step(-1); }
+});
+/* 點畫面跳到下一張 */
+stories.forEach(st => st.querySelector(".stage").addEventListener("click", e => {
+  if (e.target.closest("button")) return;
+  const vh = innerHeight, top = st.offsetTop;
+  const p = (scrollY - top) / (st.offsetHeight - vh);
+  const idx = Math.min(SLIDES, Math.floor(p * SLIDES + 1e-3) + 1);
+  scrollTo({ top: top + (st.offsetHeight - vh) * (idx / SLIDES) + 2, behavior:"smooth" });
+}));
+
+/* ---------- 結尾統計 ---------- */
+const counts = Object.fromEntries(TAG_TYPES.map(t => [t, 0]));
+QUEUE.forEach(s => new Set(s.tags.map(t => t[0])).forEach(t => counts[t]++));
+$("#stats").innerHTML = TAG_TYPES.map(t => `<div class="stat"><span>${t}</span>
+  <div class="b"><i style="width:${counts[t]/QUEUE.length*100}%;background:${tagColor(t)}"></i></div><span>${counts[t]}</span></div>`).join("");
+
+/* ---------- 播放器 ---------- */
+let cur = -1, playing = false, demoT = 0, demoTimer = null, floatTimer = null, wordI = 0, shown = new Set();
+let yt = null, ytReady = false;
+window.onYouTubeIframeAPIReady = () => {
+  yt = new YT.Player("yt", { width:"100%", height:"100%",
+    playerVars:{ playsinline:1, rel:0, modestbranding:1 },
+    events:{
+      onReady: () => { ytReady = true; },
+      onStateChange: e => {
+        if (e.data === YT.PlayerState.ENDED) next();
+        if (e.data === YT.PlayerState.PLAYING) setPlaying(true);
+        if (e.data === YT.PlayerState.PAUSED) setPlaying(false);
+      } } });
+};
+const tag = document.createElement("script");
+tag.src = "https://www.youtube.com/iframe_api";
+document.head.appendChild(tag);
+
+function play(i) {
+  if (i < 0 || i >= QUEUE.length) return;
+  const s = QUEUE[i], same = i === cur;
+  cur = i;
+  if (!same) { wordI = 0; shown.clear(); demoT = 0; }
+  $("#nowbar").classList.add("show");
+  $("#nbArt").innerHTML = badge(s);
+  $("#nbArt").classList.toggle("ph", !!s.photo);
+  $("#nbArt").style.background = `var(--${s.side})`;
+  $("#nbArt").style.setProperty("--side", `var(--${s.side})`);
+  $("#nbT").textContent = `〈${s.title}〉`;
+  $("#nbS").textContent = `${s.who}・${s.city}`;
+  document.querySelectorAll(".tr").forEach(b => b.classList.toggle("on", +b.dataset.i === i));
+  const useYT = s.yt && ytReady;
+  $("#nbNote").textContent = useYT ? "" : (s.yt ? "預覽環境無法載入 YouTube，部署後即可播放" : "尚未填入影片，目前為示意播放");
+  $("#video").classList.toggle("show", !!useYT);
+  if (useYT) {
+    clearInterval(demoTimer);
+    same ? yt.playVideo() : yt.loadVideoById(s.yt);
+  } else {
+    clearInterval(demoTimer);
+    demoTimer = setInterval(() => { demoT += .25; if (demoT >= DEMO_SECONDS) next(); tick(); }, 250);
+    setPlaying(true);
+  }
+}
+function pause() {
+  const s = QUEUE[cur];
+  if (s && s.yt && ytReady) yt.pauseVideo();
+  clearInterval(demoTimer);
+  setPlaying(false);
+}
+function next() { cur + 1 < QUEUE.length ? play(cur + 1) : (pause(), cur = -1); }
+function prev() { play(Math.max(0, cur - 1)); }
+function setPlaying(v) {
+  playing = v;
+  document.body.classList.toggle("paused", !v);
+  $("#ppIco").innerHTML = v ? '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>' : '<path d="M7 4.5v15l13-7.5z"/>';
+  clearInterval(floatTimer);
+  if (v) { spawn(); floatTimer = setInterval(spawn, 1700); }
+}
+$("#pp").onclick = () => playing ? pause() : play(cur < 0 ? 0 : cur);
+$("#next").onclick = next;
+$("#prev").onclick = prev;
+$("#playAll").onclick = () => play(0);
+
+function times() {
+  const s = QUEUE[cur];
+  if (s && s.yt && ytReady && yt.getDuration) return [yt.getCurrentTime() || 0, yt.getDuration() || 0];
+  return [demoT, DEMO_SECONDS];
+}
+function tick() {
+  if (cur < 0) return;
+  const [t, d] = times();
+  $("#cur").textContent = fmt(t);
+  $("#tot").textContent = fmt(d);
+  $("#barI").style.width = (d ? t/d*100 : 0) + "%";
+  /* 有時間碼的歌詞：播到就出現 */
+  const s = QUEUE[cur];
+  s.lyrics.forEach((l, k) => { if (typeof l === "object" && !shown.has(k) && t >= l.t) { shown.add(k); floatWord(l.text, s); } });
+}
+setInterval(() => { if (playing) tick(); }, 250);
+
+/* ---------- 懸浮歌詞 ---------- */
+function spawn() {
+  if (!playing || cur < 0) return;
+  const s = QUEUE[cur];
+  const timed = s.lyrics.some(l => typeof l === "object");
+  if (timed) return; // 有時間碼時交給 tick()
+  const pool = s.lyrics.length ? s.lyrics : s.words;
+  floatWord(pool[wordI++ % pool.length], s);
+}
+function floatWord(text, s) {
+  const el = document.createElement("div");
+  el.className = "fw";
+  el.textContent = text;
+  const size = 28 + Math.random() * 56;
+  el.style.fontSize = size + "px";
+  el.style.color = `var(--${s.side})`;
+  el.style.left = (4 + Math.random() * 70) + "vw";
+  el.style.top = (18 + Math.random() * 55) + "vh";
+  $("#float").appendChild(el);
+  el.addEventListener("animationend", () => el.remove());
+}
+</script>
+</body>
+</html>
